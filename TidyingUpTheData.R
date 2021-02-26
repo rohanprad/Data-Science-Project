@@ -67,11 +67,19 @@ getTeamData <- function(teamName){
       goal.difference <- goals.for - goals.against
       
       home.win.rate <- home.wins/length(Home$FTR) * 100
+      home.win.rate <- round(home.win.rate)
+      
       away.win.rate <- away.wins/length(Away$FTR) * 100
+      away.win.rate <- round(away.win.rate)
+      
       overall.win.rate <- wins/played * 100
+      overall.win.rate <- round(overall.win.rate)
       
       goals.for.avg <- goals.for/played
+      goals.for.avg <- round(goals.for.avg, digits = 1)
+      
       goals.against.avg <- goals.against/played
+      goals.against.avg <- round(goals.against.avg, digits = 1)
       
       shots <- sum(Home$HS) + sum(Away$AS)
       shots.target <- sum(Home$HST) + sum(Away$AST)
