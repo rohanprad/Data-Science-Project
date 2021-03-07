@@ -115,7 +115,17 @@ league.table
 league.table <- arrange(league.table, desc(Pts), desc(GD), desc(GF))
 league.table
 
+# Converting the clubs column into a factor
+league.table <- mutate(league.table, Club = as.factor(league.table$Club))
+
+# Creating teamwise dataframes
+for(team in league.table$Club){
+  nam <- paste(team, sep = "")
+  assign(nam, filter(tidy.data, HomeTeam == team | AwayTeam == team))
+}
+
 # Creating a CSV file to store the final tidy data
 
 write.csv(league.table, file = "./Dataset/TidyData.csv")
+
 
