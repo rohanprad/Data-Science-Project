@@ -90,17 +90,29 @@ getTeamData <- function(teamName){
       
       yellow.cards <- sum(Home$HY) + sum(Away$AY)
       red.cards <- sum(Home$HR) + sum(Away$AR)
+      bookings <- yellow.cards + red.cards
       
-      team.data <- data.frame(teamName, played, wins, draws, losses, goal.difference, points, goals.for, goals.against, goals.for.avg, goals.against.avg, home.wins, home.draws, home.losses, home.win.rate, away.wins, away.draws, away.losses, away.win.rate, overall.win.rate, shots, shots.target, corners, fouls, yellow.cards, red.cards )
-      names(team.data) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST", "C", "F", "YC", "RC")
+      team.data <- data.frame(teamName, played, wins, draws, losses, 
+                              goal.difference, points, goals.for, goals.against, 
+                              goals.for.avg, goals.against.avg, home.wins, home.draws, home.losses, home.win.rate, 
+                              away.wins, away.draws, away.losses, away.win.rate, overall.win.rate, 
+                              shots, shots.target, corners, fouls, bookings, yellow.cards, red.cards)
+      
+      names(team.data) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", 
+                            "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST",
+                            "C", "F", "B", "YC", "RC")
       team.data
 
 }
 
 # Creating an empty dataframe to store the final results for all 20 teams
 
-league.table <- data.frame(matrix(nrow = 0, ncol = 26))
-colnames(league.table) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST", "C", "F", "YC", "RC")
+league.table <- data.frame(matrix(nrow = 0, ncol = 27))
+colnames(league.table) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", 
+                            "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST", 
+                            "C", "F", "B", "YC", "RC")
 
 # Creating the league table
 
@@ -110,6 +122,19 @@ for(club in clubs){
 }
 league.table
 
+
+league.table <- arrange(league.table, Club)
+league.table
+
+teamColors <- c("#EF0107", "#95BFE5", "#0057B8", "#6C1D45", "#034694", "#A7A5A6",
+                "#003399", "#000000", "#FFCD00", "#003090", "#9C1310", "#6CABDD", 
+                "#DA291C", "#241F20", "#EE2737", "#D71920", "#132257", "#122F67", 
+                "#7A263A", "#FDB913")
+
+league.table$Col = teamColors
+
+
+
 # Arranging the league table by points > goal difference > goals for
 
 league.table <- arrange(league.table, desc(Pts), desc(GD), desc(GF))
@@ -117,6 +142,7 @@ league.table
 
 # Converting the clubs column into a factor
 league.table <- mutate(league.table, Club = as.factor(league.table$Club))
+
 
 # Creating teamwise dataframes
 for(team in league.table$Club){
