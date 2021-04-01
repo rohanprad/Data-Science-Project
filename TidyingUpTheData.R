@@ -99,7 +99,7 @@ getTeamData <- function(teamName){
                               shots, shots.target, corners, fouls, bookings, yellow.cards, red.cards)
       
       names(team.data) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
-                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.Rate", 
                             "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST",
                             "C", "F", "B", "YC", "RC")
       team.data
@@ -110,7 +110,7 @@ getTeamData <- function(teamName){
 
 league.table <- data.frame(matrix(nrow = 0, ncol = 27))
 colnames(league.table) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
-                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.rate", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.Rate", 
                             "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST", 
                             "C", "F", "B", "YC", "RC")
 
@@ -145,10 +145,10 @@ league.table <- mutate(league.table, Club = as.factor(league.table$Club))
 
 
 # Creating teamwise dataframes
-for(team in league.table$Club){
-  nam <- paste(team, sep = "")
-  assign(nam, filter(tidy.data, HomeTeam == team | AwayTeam == team))
-}
+#for(team in league.table$Club){
+ # nam <- paste(team, sep = "")
+  #assign(nam, filter(tidy.data, HomeTeam == team | AwayTeam == team))
+#}
 
 # Creating a CSV file to store the final tidy data
 
