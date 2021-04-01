@@ -2,20 +2,48 @@
 title: "Analysis of the 2020-2021 Premier League Season"
 output: html_document
 ---
+
 <p>&nbsp;</p> <!--Adds vertical space -->
 
+
+<div id = "top">
 ## Introduction
 ***************
+
 <p>
 The Premier League, often referred to outside the UK as the English Premier League, or sometimes the EPL, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League.
 </p>
 
 <p>
-In this project, I have attempted to visualize a few of the most common football stats as seen on major sports channels and publications. The raw used can be found on [this](http://www.football-data.co.uk/englandm.php) website 
+In this project, I have attempted to visualize a few of the most common football stats as seen on major sports channels and publications. The raw used can be found on [this](http://www.football-data.co.uk/englandm.php) website. 
 </p>
+</div>
 
 <p>&nbsp;</p>
 
+<div id = "links">
+## Quick Links
+**************
+* <a href ="#gnc" >Getting and Cleaning Data</a>
+* <a href ="#stats" >Performing Statistical Tests</a>
+* <a href ="#visualize" >Visualizing the Data</a>
+  + <a href ="#points" >Points</a>
+  + <a href ="#scored" >Goals Scored</a>
+  + <a href ="#conceded" >Goals Conceded</a>
+  + <a href ="#pvs" >Points Vs Goals Scored</a>
+  + <a href ="#pvc" >Points Vs Goals Conceded</a>
+  + <a href ="#home" >Home Performance</a>
+  + <a href ="#away" >Away Performance</a>
+  + <a href ="#creativity" >Creativity</a>
+  + <a href ="#clinical" >Clinical Attacks</a>
+  + <a href ="#fouls" >Fair Play/ Tactical Fouls</a>
+  + <a href ="#ycards" >Yellow Cards</a>
+  + <a href ="#rcards" >Red Cards</a>
+</div>
+
+<p>&nbsp;</p>
+  
+<div id = "gnc">
 ## Getting and Cleaning the Data
 ********************************
 
@@ -204,8 +232,15 @@ Creating a CSV file to store the final tidy data
 write.csv(league.table, file = "./Dataset/TidyData.csv")
 
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
 
 <p>&nbsp;</p>
+
+<div id = "stats">
 
 ## Performing Statistical Tests
 *******************************
@@ -305,6 +340,14 @@ p-value > 0.05 so a significant correlation does not exist
 
 <p>&nbsp;</p>
 
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
+<div id = "visualize">
+
 ## Visualizing the Data
 ***********************
 
@@ -321,6 +364,7 @@ library(ggrepel)
 ```
 <p>&nbsp;</p>
 
+<div id = "points">
 ### Who has how many points?
 ****************************
 
@@ -335,10 +379,16 @@ ggplot(league.table, aes(Club, Pts))+
        y = "Points",
        title = "Premier League 2020-21 Points")
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
 
 <p>&nbsp;</p>
 
-### Most Goals Scored
+<div id = "scored">
+### Goals Scored
 ****************************
 
 ```{r,  message = FALSE}
@@ -352,10 +402,17 @@ ggplot(league.table, aes(Club, GF))+
        y = "Goals",
        title = "Premier League 2020-21 Goals Scored")
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
 
 <p>&nbsp;</p>
 
-### Most Goals Conceded
+<div id = "conceded">
+
+### Goals Conceded
 ****************************
 
 ```{r,  message = FALSE}
@@ -369,9 +426,15 @@ ggplot(league.table, aes(Club, GA))+
        y = "Goals",
        title = "Premier League 2020-21 Goals Conceded")
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
 
 <p>&nbsp;</p>
 
+<div id = "pvs">
 ### Points Vs Goals Scored
 ****************************
 
@@ -392,9 +455,15 @@ ggplot(league.table, aes(GF, Pts) )+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
 
 <p>&nbsp;</p>
 
+<div id = "pvc">
 ### Points Vs Goals Conceded
 ****************************
 
@@ -415,8 +484,15 @@ ggplot(league.table, aes(GA, Pts))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "home">
 ### Home Performance
 ****************************
 
@@ -436,8 +512,15 @@ ggplot(league.table, aes(HW.Rate, Pts))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "away">
 ### Away Performance
 ****************************
 
@@ -458,8 +541,15 @@ ggplot(league.table, aes(AW.Rate, Pts))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "creativity">
 ### Creativity 
 ****************************
 
@@ -480,8 +570,15 @@ ggplot(league.table, aes(S, ST))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "clinical">
 ### Clinical Attacks
 ****************************
 
@@ -502,8 +599,15 @@ ggplot(league.table, aes(S, (GF/S * 100)))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "fouls">
 ### Fair Play / Tactical Fouls 
 ****************************
 
@@ -524,8 +628,15 @@ ggplot(league.table, aes(F, B))+
   )+
   scale_size_identity()
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "ycards">
 ### Yellow Cards
 ****************************
 
@@ -540,8 +651,15 @@ ggplot(league.table, aes(Club, YC))+
        y = "Yellow Cards",
        title = "Premier League 2020-21 Yellow Cards")
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
 <p>&nbsp;</p>
 
+<div id = "rcards">
 ### Red Cards
 ****************************
 
@@ -557,8 +675,18 @@ ggplot(league.table, aes(Club, RC))+
        title = "Premier League 2020-21 Red Cards")
 
 ```
+</div>
+
+<div  style = "text-align: right;">
+<a href = "#links">To Links</a>
+</div>
+
+</div>
 
 
-<footer>
-<p>Rohan Pradhan</p>
-</footer>
+By Rohan Pradhan (2018CSC1047)
+
+<div  style = "text-align: right;">
+<a href = "#top">To Top</a>
+</div>
+
