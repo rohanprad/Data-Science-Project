@@ -1,0 +1,564 @@
+---
+title: "Analysis of the 2020-2021 Premier League Season"
+output: html_document
+---
+<p>&nbsp;</p> <!--Adds vertical space -->
+
+## Introduction
+***************
+<p>
+The Premier League, often referred to outside the UK as the English Premier League, or sometimes the EPL, is the top level of the English football league system. Contested by 20 clubs, it operates on a system of promotion and relegation with the English Football League.
+</p>
+
+<p>
+In this project, I have attempted to visualize a few of the most common football stats as seen on major sports channels and publications. The raw used can be found on [this](http://www.football-data.co.uk/englandm.php) website 
+</p>
+
+<p>&nbsp;</p>
+
+## Getting and Cleaning the Data
+********************************
+
+Fetching the data from the github repository
+
+```{r, message = FALSE}
+full.data <- read.csv("https://raw.githubusercontent.com/rohanprad/Data-Science-Project/main/Dataset/PL20-21.csv")
+```
+
+<p>&nbsp;</p>
+
+Selecting only relevant observations
+
+```{r, message = FALSE}
+library(dplyr)
+
+tidy.data <- select(full.data, Date:AR)
+tidy.data <- select(tidy.data, -(Time))
+tidy.data <- select(tidy.data, -(Referee))
+```
+
+<p>&nbsp;</p>
+
+Getting the List of the 20 Team Names
+
+```{r, message = FALSE}
+clubs <- unique(tidy.data$HomeTeam)
+```
+
+<p>&nbsp;</p>
+
+Then I defined a function called
+[getTeamData()](https://github.com/rohanprad/Data-Science-Project/blob/main/TidyingUpTheData.R) 
+which was used to summarize the results of all the matches and return a single row dataframe of 
+relevant data columns for each team
+
+```{r, include = FALSE}
+
+getTeamData <- function(teamName){
+
+      Home <- filter(tidy.data, HomeTeam == teamName)
+      
+      Away <- filter(tidy.data, AwayTeam == teamName)
+      
+      home.wins <- 0
+      home.losses <- 0
+      home.draws <- 0
+      
+      away.wins <- 0
+      away.losses <- 0
+      away.draws <- 0
+      
+      for(result in Home$FTR){
+          if(result == "H"){
+              home.wins <- home.wins + 1
+          }else if(result == "A"){
+              home.losses <- home.losses + 1
+          }else{
+              home.draws <- home.draws + 1
+          }
+      }
+      
+      
+      for(result in Away$FTR){
+        if(result == "A"){
+          away.wins <- away.wins + 1
+        }else if(result == "H"){
+          away.losses <- away.losses + 1
+        }else{
+          away.draws <- away.draws + 1
+        }
+      }
+      
+      wins <- home.wins + away.wins
+      draws <- home.draws + away.draws
+      losses <- home.losses + away.losses
+      
+      played <- wins + draws + losses
+      points <- (3*wins) + (draws)
+      
+      goals.for <- sum(Home$FTHG) + sum(Away$FTAG)
+      goals.against <- sum(Home$FTAG) + sum(Away$FTHG)
+      
+      goal.difference <- goals.for - goals.against
+      
+      home.win.rate <- home.wins/length(Home$FTR) * 100
+      home.win.rate <- round(home.win.rate)
+      
+      away.win.rate <- away.wins/length(Away$FTR) * 100
+      away.win.rate <- round(away.win.rate)
+      
+      overall.win.rate <- wins/played * 100
+      overall.win.rate <- round(overall.win.rate)
+      
+      goals.for.avg <- goals.for/played
+      goals.for.avg <- round(goals.for.avg, digits = 1)
+      
+      goals.against.avg <- goals.against/played
+      goals.against.avg <- round(goals.against.avg, digits = 1)
+      
+      shots <- sum(Home$HS) + sum(Away$AS)
+      shots.target <- sum(Home$HST) + sum(Away$AST)
+      
+      corners <- sum(Home$HC) + sum(Away$AC)
+      
+      fouls <- sum(Home$HF) + sum(Away$AF)
+      
+      yellow.cards <- sum(Home$HY) + sum(Away$AY)
+      red.cards <- sum(Home$HR) + sum(Away$AR)
+      bookings <- yellow.cards + red.cards
+      
+      team.data <- data.frame(teamName, played, wins, draws, losses, 
+                              goal.difference, points, goals.for, goals.against, 
+                              goals.for.avg, goals.against.avg, home.wins, home.draws, home.losses, home.win.rate, 
+                              away.wins, away.draws, away.losses, away.win.rate, overall.win.rate, 
+                              shots, shots.target, corners, fouls, bookings, yellow.cards, red.cards)
+      
+      names(team.data) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.Rate", 
+                            "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST",
+                            "C", "F", "B", "YC", "RC")
+      team.data
+
+}
+```
+
+<p>&nbsp;</p>
+
+Then I created an empty dataframe (the league table) to store the final results for all 20 teams
+
+```{r, message = FALSE}
+league.table <- data.frame(matrix(nrow = 0, ncol = 27))
+colnames(league.table) <- c("Club", "P", "W", "D", "L", "GD", "Pts", "GF", "GA", 
+                            "GF.Avg", "GA.Avg", "HW", "HD", "HL", "HW.Rate", 
+                            "AW", "AD", "AL", "AW.Rate", "W.Rate", "S", "ST", 
+                            "C", "F", "B", "YC", "RC")
+for(club in clubs){
+  row <- getTeamData(club)
+  league.table <- rbind(league.table, row)
+}
+
+```
+
+<p>&nbsp;</p>
+
+Adding a new column for each team defining the team colours
+
+```{r, message = FALSE}
+league.table <- arrange(league.table, Club)
+
+
+teamColors <- c("#EF0107", "#95BFE5", "#0057B8", "#6C1D45", "#034694", "#A7A5A6",
+                "#003399", "#000000", "#FFCD00", "#003090", "#9C1310", "#6CABDD", 
+                "#DA291C", "#241F20", "#EE2737", "#D71920", "#132257", "#122F67", 
+                "#7A263A", "#FDB913")
+
+league.table$Col = teamColors
+```
+
+<p>&nbsp;</p>
+
+Arranging the league table by points > goal difference > goals for
+
+```{r, message = FALSE}
+
+league.table <- arrange(league.table, desc(Pts), desc(GD), desc(GF))
+
+```
+
+<p>&nbsp;</p>
+
+Converting the clubs column into a factor
+
+```{r, message = FALSE}
+
+league.table <- mutate(league.table, Club = as.factor(league.table$Club))
+
+```
+
+<p>&nbsp;</p>
+
+Creating a CSV file to store the final tidy data
+
+```{r, message = FALSE}
+
+write.csv(league.table, file = "./Dataset/TidyData.csv")
+
+```
+
+<p>&nbsp;</p>
+
+## Performing Statistical Tests
+*******************************
+
+```{r, message = FALSE, warning = FALSE}
+summary(league.table)
+
+table(league.table$HW)
+
+table(league.table$Club)
+
+table(league.table$Club, league.table$HW)
+```
+<p>&nbsp;</p>
+
+Chi Squared Test on win rate vs number of wins
+
+```{r, message = FALSE, warning = FALSE}
+summary(table(league.table$W.Rate, league.table$W))
+```
+p-value < 0.05 : not independent
+<p>&nbsp;</p>
+
+
+Quantile for number of goals scored with 5% probablity
+```{r, message = FALSE, warning = FALSE}
+quantile(league.table$GF, .05)
+```
+<p>&nbsp;</p>
+
+Quantile for number of goals scored with 5% and 95% probablity
+```{r, message = FALSE, warning = FALSE}
+quantile(league.table$GF, c(.05, .95))
+```
+
+<p>&nbsp;</p>
+
+Quantile for number of goals scored with an interval of 25% in the probabilties
+```{r, message = FALSE, warning = FALSE}
+quantile(league.table$GF)
+```
+
+<p>&nbsp;</p>
+
+Converting Points to Z-Scores
+```{r, message = FALSE, warning = FALSE}
+scale(league.table$Pts)
+```
+
+<p>&nbsp;</p>
+
+Using the t.test and asking if the mean of points can be 40
+```{r, message = FALSE, warning = FALSE}
+t.test(league.table$Pts, mu = 40)
+```
+p-value <  0.05 so it's unlikely that mean is 40
+null hypothesis is rejected
+
+<p>&nbsp;</p>
+
+Using the t.test and asking if the mean of points can be 40 with a confidence level of 99%
+```{r, message = FALSE, warning = FALSE}
+t.test(league.table$Pts, conf.level = 0.99, mu = 40)
+```
+p-value <  0.05 so it's unlikely that mean is 40
+null hypothesis is rejected
+
+<p>&nbsp;</p>
+
+Calcuting the confidence interval for the median of points using the Wilcox Test
+```{r, message = FALSE, warning = FALSE}
+wilcox.test(league.table$Pts, conf.int = TRUE)
+```
+<p>&nbsp;</p>
+
+Using the Shapiro Test for normality
+```{r, message = FALSE, warning = FALSE}
+shapiro.test(league.table$Pts)
+```
+p-value > 0.05 so it's normally distributed
+
+<p>&nbsp;</p>
+
+Checking if the correlation between points and the number of wins is significant
+```{r, message = FALSE, warning = FALSE}
+cor.test(league.table$Pts, league.table$W)
+```
+p-value < 0.05 so a significant correlation exists
+
+<p>&nbsp;</p>
+
+Checking if the correlation between points and the number of yellow cards is significant
+```{r, message = FALSE, warning = FALSE}
+cor.test(league.table$Pts, league.table$YC)
+```
+p-value > 0.05 so a significant correlation does not exist
+
+<p>&nbsp;</p>
+
+## Visualizing the Data
+***********************
+
+Loading the necessary packages
+
+```{r,  message = FALSE}
+
+library(ggplot2)
+
+#install.packages("devtools")
+#devtools::install_github("slowkow/ggrepel")
+
+library(ggrepel)
+```
+<p>&nbsp;</p>
+
+### Who has how many points?
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(Club, Pts))+
+  geom_bar(stat = "identity",
+           fill = league.table$Col)+
+  theme_bw()+
+  coord_flip()+
+  labs(x = "Club",
+       y = "Points",
+       title = "Premier League 2020-21 Points")
+```
+
+<p>&nbsp;</p>
+
+### Most Goals Scored
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(Club, GF))+
+  geom_bar(stat = "identity",
+           fill = league.table$Col)+
+  theme_bw()+
+  coord_flip()+
+  labs(x = "Club",
+       y = "Goals",
+       title = "Premier League 2020-21 Goals Scored")
+```
+
+<p>&nbsp;</p>
+
+### Most Goals Conceded
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(Club, GA))+
+  geom_bar(stat = "identity",
+           fill = league.table$Col)+
+  theme_bw()+
+  coord_flip()+
+  labs(x = "Club",
+       y = "Goals",
+       title = "Premier League 2020-21 Goals Conceded")
+```
+
+<p>&nbsp;</p>
+
+### Points Vs Goals Scored
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(GF, Pts) )+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = F, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Goals",
+    y = "Points",
+    title = "Points Vs Goals Scored")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -1.0, 
+    aes(size = 2.5)
+  )+
+  scale_size_identity()
+```
+
+<p>&nbsp;</p>
+
+### Points Vs Goals Conceded
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(GA, Pts))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = F, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Goals",
+    y = "Points",
+    title = "Points Vs Goals Conceded")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -1.0, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Home Performance
+****************************
+
+```{r,  message = FALSE}
+ggplot(league.table, aes(HW.Rate, Pts))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = FALSE, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Win %",
+    y = "Points",
+    title = "Home Performance")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -0.25, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Away Performance
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(AW.Rate, Pts))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = FALSE, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Win %",
+    y = "Points",
+    title = "Away Performance")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -0.25, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Creativity 
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(S, ST))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = FALSE, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Shots",
+    y = "Shots on Target",
+    title = "Creativity")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -0.25, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Clinical Attacks
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(S, (GF/S * 100)))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = FALSE, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Shots",
+    y = "Score Rate",
+    title = "Clinical Attacks")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -0.25, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Fair Play / Tactical Fouls 
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(F, B))+
+  geom_point(size = 4, col = league.table$Col)+
+  geom_smooth(method = lm, se = FALSE, formula = y ~ x)+
+  theme_bw()+
+  labs(
+    x = "Fouls",
+    y = "Bookings",
+    title = "Fair Play/ Tactical Fouls")+
+  geom_text_repel(
+    label= league.table$Club, 
+    nudge_x = 0, nudge_y = -0.25, 
+    aes(size = 3)
+  )+
+  scale_size_identity()
+```
+<p>&nbsp;</p>
+
+### Yellow Cards
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(Club, YC))+
+  geom_bar(stat = "identity",
+           fill = league.table$Col)+
+  theme_bw()+
+  coord_flip()+
+  labs(x = "Club",
+       y = "Yellow Cards",
+       title = "Premier League 2020-21 Yellow Cards")
+```
+<p>&nbsp;</p>
+
+### Red Cards
+****************************
+
+```{r,  message = FALSE}
+
+ggplot(league.table, aes(Club, RC))+
+  geom_bar(stat = "identity",
+           fill = league.table$Col)+
+  theme_bw()+
+  coord_flip()+
+  labs(x = "Club",
+       y = "Red Cards",
+       title = "Premier League 2020-21 Red Cards")
+
+```
+
+
+<footer>
+<p>Rohan Pradhan</p>
+</footer>
