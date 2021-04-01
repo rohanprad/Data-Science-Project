@@ -1,8 +1,8 @@
 # Analysis of the 2020-2021 Premier League Season
 
-View the analysis [here] (https://rohanprad.github.io/Data-Science-Project/index.html)
+View the analysis [here](https://rohanprad.github.io/Data-Science-Project/index.html)
 
-The raw dataset used can be found on the following [website] (http://www.football-data.co.uk/englandm.php)
+The raw dataset used can be found on the following [website](http://www.football-data.co.uk/englandm.php)
 
 ## Legend for the Tidy Dataset
  
