@@ -131,8 +131,13 @@ teamColors <- c("#EF0107", "#95BFE5", "#0057B8", "#6C1D45", "#034694", "#A7A5A6"
                 "#DA291C", "#241F20", "#EE2737", "#D71920", "#132257", "#122F67", 
                 "#7A263A", "#FDB913")
 
-league.table$Col = teamColors
+teamCities <- factor(c("London", "Birmingham", "Brighton & Hove", "Burnley", 
+                       "London", "London", "Liverpool", "London", "Leeds", "Leceister",
+                       "Liverpool", "Manchester", "Manchester", "Newcastle", "Sheffield",
+                       "Southampton", "London", "West Bromwich", "London", "Wolverhampton"))
 
+league.table$Col = teamColors
+league.table$City = teamCities
 
 
 # Arranging the league table by points > goal difference > goals for
@@ -143,12 +148,6 @@ league.table
 # Converting the clubs column into a factor
 league.table <- mutate(league.table, Club = as.factor(league.table$Club))
 
-
-# Creating teamwise dataframes
-#for(team in league.table$Club){
- # nam <- paste(team, sep = "")
-  #assign(nam, filter(tidy.data, HomeTeam == team | AwayTeam == team))
-#}
 
 # Creating a CSV file to store the final tidy data
 
