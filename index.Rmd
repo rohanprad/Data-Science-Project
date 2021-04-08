@@ -291,13 +291,6 @@ quantile(league.table$GF)
 
 <p>&nbsp;</p>
 
-Converting Points to Z-Scores
-```{r, message = FALSE, warning = FALSE}
-scale(league.table$Pts)
-```
-
-<p>&nbsp;</p>
-
 Using the t.test and asking if the mean of points can be 40
 ```{r, message = FALSE, warning = FALSE}
 t.test(league.table$Pts, mu = 40)
