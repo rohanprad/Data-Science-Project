@@ -316,7 +316,7 @@ Null hypothesis is rejected.
 
 <p>&nbsp;</p>
 
-Calcuting the confidence interval for the median of points using the Wilcox Test
+Calculating the confidence interval for the median of points using the Wilcox Test
 ```{r, message = FALSE, warning = FALSE}
 wilcox.test(league.table$Pts, conf.int = TRUE)
 ```
