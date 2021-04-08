@@ -1,14 +1,15 @@
 summary(league.table)
 
-table(league.table$HW)
+table(league.table$City)
 
 table(league.table$Club)
 
-table(league.table$Club, league.table$HW)
+table(league.table$Club, league.table$City)
 
-# Chi Squared Test on win rate vs number of wins
-summary(table(league.table$W.Rate, league.table$W))
-# p-value < 0.05 : not independent
+# Chi Squared Test on Club and City
+# Null Hypothesis: The variables are dependent
+summary(table(league.table$Club, league.table$City))
+# p-value > 0.05 : Fails to provide any evidence
 
 
 # Quantile for number of goals scored with 5% probablity
@@ -33,7 +34,7 @@ t.test(league.table$Pts, conf.level = 0.99, mu = 40)
 # p-value <  0.05 so it's unlikely that mean is 40
 # null hypothesis is rejected
 
-# Calcuting the confidence interval for the median of points using the Wilcox Test
+# Calculating the confidence interval for the median of points using the Wilcox Test
 wilcox.test(league.table$Pts, conf.int = TRUE)
 
 # Using the Shapiro Test for normality

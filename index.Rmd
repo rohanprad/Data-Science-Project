@@ -15,7 +15,7 @@ The Premier League, often referred to outside the UK as the English Premier Leag
 </p>
 
 <p>
-In this project, I have attempted to visualize a few of the most common football stats as seen on major sports channels and publications. The raw used can be found on [this](http://www.football-data.co.uk/englandm.php) website. 
+In this project, I have attempted to visualize a few of the most common football stats as seen on major sports channels and publications. The raw data used can be found on [this](http://www.football-data.co.uk/englandm.php) website. 
 </p>
 </div>
 
@@ -189,18 +189,23 @@ for(club in clubs){
 
 <p>&nbsp;</p>
 
-Adding a new column for each team defining the team colours
+Adding two new columns for each team defining the colour and the city
 
 ```{r, message = FALSE}
 league.table <- arrange(league.table, Club)
-
 
 teamColors <- c("#EF0107", "#95BFE5", "#0057B8", "#6C1D45", "#034694", "#A7A5A6",
                 "#003399", "#000000", "#FFCD00", "#003090", "#9C1310", "#6CABDD", 
                 "#DA291C", "#241F20", "#EE2737", "#D71920", "#132257", "#122F67", 
                 "#7A263A", "#FDB913")
 
+teamCities <- factor(c("London", "Birmingham", "Brighton & Hove", "Burnley", 
+                       "London", "London", "Liverpool", "London", "Leeds", "Leceister",
+                       "Liverpool", "Manchester", "Manchester", "Newcastle", "Sheffield",
+                       "Southampton", "London", "West Bromwich", "London", "Wolverhampton"))
+
 league.table$Col = teamColors
+league.table$City = teamCities
 ```
 
 <p>&nbsp;</p>
@@ -248,20 +253,21 @@ write.csv(league.table, file = "./Dataset/TidyData.csv")
 ```{r, message = FALSE, warning = FALSE}
 summary(league.table)
 
-table(league.table$HW)
+table(league.table$City)
 
 table(league.table$Club)
 
-table(league.table$Club, league.table$HW)
+table(league.table$Club, league.table$City)
 ```
 <p>&nbsp;</p>
 
-Chi Squared Test on win rate vs number of wins
+Chi Squared Test on Club and City  
+Null Hypothesis: The variables are dependent.
 
 ```{r, message = FALSE, warning = FALSE}
-summary(table(league.table$W.Rate, league.table$W))
+summary(table(league.table$Club, league.table$City))
 ```
-p-value < 0.05 : not independent
+p-value > 0.05 : Fails to provide any evidence
 <p>&nbsp;</p>
 
 
@@ -296,8 +302,8 @@ Using the t.test and asking if the mean of points can be 40
 ```{r, message = FALSE, warning = FALSE}
 t.test(league.table$Pts, mu = 40)
 ```
-p-value <  0.05 so it's unlikely that mean is 40
-null hypothesis is rejected
+p-value <  0.05 so it's unlikely that mean is 40.  
+Null hypothesis is rejected.
 
 <p>&nbsp;</p>
 
@@ -305,8 +311,8 @@ Using the t.test and asking if the mean of points can be 40 with a confidence le
 ```{r, message = FALSE, warning = FALSE}
 t.test(league.table$Pts, conf.level = 0.99, mu = 40)
 ```
-p-value <  0.05 so it's unlikely that mean is 40
-null hypothesis is rejected
+p-value <  0.05 so it's unlikely that mean is 40.  
+Null hypothesis is rejected.
 
 <p>&nbsp;</p>
 
@@ -320,7 +326,7 @@ Using the Shapiro Test for normality
 ```{r, message = FALSE, warning = FALSE}
 shapiro.test(league.table$Pts)
 ```
-p-value > 0.05 so it's normally distributed
+p-value > 0.05 so it's normally distributed.
 
 <p>&nbsp;</p>
 
@@ -328,7 +334,7 @@ Checking if the correlation between points and the number of wins is significant
 ```{r, message = FALSE, warning = FALSE}
 cor.test(league.table$Pts, league.table$W)
 ```
-p-value < 0.05 so a significant correlation exists
+p-value < 0.05 so a significant correlation exists.
 
 <p>&nbsp;</p>
 
@@ -336,7 +342,7 @@ Checking if the correlation between points and the number of yellow cards is sig
 ```{r, message = FALSE, warning = FALSE}
 cor.test(league.table$Pts, league.table$YC)
 ```
-p-value > 0.05 so a significant correlation does not exist
+p-value > 0.05 so a significant correlation does not exist.
 
 <p>&nbsp;</p>
 
